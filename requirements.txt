@@ -1,0 +1,9 @@
+Paraa el proyecto de probabilidad, se necesitan las siguientes dependencias que se pueden instalar utilizando el archivo `requirements.txt`:    
+streamlit
+pandas
+numpy
+matplotlib
+seaborn
+scipy
+google-generativeai
+python-dotenv
