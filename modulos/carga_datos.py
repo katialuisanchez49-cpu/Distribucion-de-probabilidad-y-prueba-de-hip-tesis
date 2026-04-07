@@ -2,6 +2,13 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+PALETA = {
+    "principal":   "#E74C3C",
+    "medio_alto":  "#F1948A",
+    "medio":       "#F5B7B1",
+    "suave":       "#FADBD8",
+    "fondo":       "#FDEDEC"
+}
 def modulo_carga_datos():
     st.header("Carga de Datos")
     st.write("Sube un archivo CSV o genera datos sintéticos para comenzar.")
