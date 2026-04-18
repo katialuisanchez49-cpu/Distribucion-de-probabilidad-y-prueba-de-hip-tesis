@@ -3,13 +3,12 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-
 PALETA = {
-    "principal":  "#E74C3C",
-    "medio_alto": "#F1948A",
-    "medio":      "#F5B7B1",
-    "suave":      "#FADBD8",
-    "fondo":      "#FDEDEC"
+    "principal":  "#c9a84c",
+    "medio_alto": "#a8872e",
+    "medio":      "#1a2744",
+    "suave":      "#243156",
+    "fondo":      "#fafaf8"
 }
 
 def modulo_prueba_z():
