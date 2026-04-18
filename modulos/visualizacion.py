@@ -104,7 +104,69 @@ def modulo_visualizacion():
             ax.set_title(f"QQ-Plot de {variable}")
             st.pyplot(fig)
             plt.close()
+        # --- Distribución Normal con valores Z ---
+        st.markdown("---")
+        st.subheader("📉 Distribución Normal Estándar")
+        st.write("Esta gráfica muestra cómo se distribuyen los datos "
+                "estandarizados (valores Z).")
 
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        # Estandarizar los datos
+        z_datos = (datos - datos.mean()) / datos.std()
+        x = np.linspace(-4, 4, 1000)
+        y = stats.norm.pdf(x)
+
+        # Curva normal teórica
+        ax.plot(x, y, color="#2C2C2C", linewidth=2.5,
+                label="Distribución normal teórica", zorder=3)
+        ax.fill_between(x, y, color=PALETA["fondo"], alpha=0.6, zorder=1)
+
+        # Histograma de datos estandarizados
+        ax.hist(z_datos, bins=30, density=True,
+                color=PALETA["medio_alto"], alpha=0.5,
+                edgecolor="white", label="Datos estandarizados", zorder=2)
+
+        # Línea de la media (Z = 0)
+        ax.axvline(0, color=PALETA["principal"], linewidth=2,
+                linestyle="--", label="Media (Z = 0)")
+
+        # Líneas de desviaciones estándar
+        for i, (val, etiqueta) in enumerate([
+            (-3, "-3σ"), (-2, "-2σ"), (-1, "-1σ"),
+            (1, "+1σ"), (2, "+2σ"), (3, "+3σ")
+        ]):
+            ax.axvline(val, color=PALETA["medio"], linewidth=1,
+                    linestyle=":", alpha=0.8)
+            ax.text(val, max(y)*1.05, etiqueta, ha="center",
+                    fontsize=9, color=PALETA["principal"])
+
+        # Valor Z de la media muestral real
+        z_media = (datos.mean() - datos.mean()) / datos.std()
+        ax.text(0, max(y)*0.6, f"x̄ = {datos.mean():.2f}",
+                ha="center", fontsize=10, color=PALETA["principal"],
+                fontweight="bold",
+                bbox=dict(boxstyle="round,pad=0.3",
+                        facecolor=PALETA["suave"], alpha=0.9))
+
+        # Estilo
+        ax.set_title("Distribución Normal Estándar con valores Z",
+                    fontsize=14, fontweight="bold", pad=15)
+        ax.set_xlabel("Valores Z (desviaciones estándar)", fontsize=12)
+        ax.set_ylabel("Densidad", fontsize=12)
+        ax.set_xlim(-4.2, 4.2)
+        ax.set_ylim(0, max(y) * 1.2)
+        ax.legend(loc="upper right", fontsize=10,
+                framealpha=0.9, edgecolor=PALETA["medio"])
+        ax.set_facecolor("#FFFFFF")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.grid(axis="y", linestyle="--", alpha=0.3)
+        fig.patch.set_facecolor("#FFFFFF")
+        plt.tight_layout()
+        st.pyplot(fig)
+        plt.close()
+        
     with tab_analisis:
         # --- Análisis automático ---
         sesgo = datos.skew()
