@@ -28,7 +28,6 @@ def modulo_asistente_ia():
     variable = st.session_state["variable"]
     datos = df[variable].dropna()
 
-    # --- Resumen estadístico ---
     resumen = {
         "variable": variable,
         "n": len(datos),
@@ -41,15 +40,16 @@ def modulo_asistente_ia():
         "maximo": round(datos.max(), 4)
     }
 
-    # --- Pestaña 1: Análisis de distribución ---
+    # --- Análisis de distribución ---
     st.subheader("📊 Análisis de Distribución")
     st.markdown("Presiona el botón para que Gemini analice "
                 "la distribución de tus datos.")
 
     if st.button("🔍 Analizar distribución con IA"):
         prompt_distribucion = f"""
-        Eres un asistente experto en estadística. Analiza este resumen estadístico 
-        y responde en español de forma clara y educativa para un estudiante universitario.
+        Eres un asistente experto en estadística. Analiza este resumen 
+        estadístico y responde en español de forma clara y educativa 
+        para un estudiante universitario.
 
         Resumen estadístico de la variable '{variable}':
         - Número de datos: {resumen['n']}
@@ -72,16 +72,26 @@ def modulo_asistente_ia():
 
         with st.spinner("Gemini está analizando los datos..."):
             try:
-                modelo = genai.GenerativeModel("gemini-1.5-flash")
-                respuesta = modelo.generate_content(prompt_distribucion)
+                modelo = genai.GenerativeModel("gemini-2.0-flash-lite")
+                respuesta = modelo.generate_content(
+                    prompt_distribucion,
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=500,
+                        temperature=0.7
+                    )
+                )
                 st.markdown("#### 💬 Respuesta de Gemini:")
                 st.markdown(respuesta.text)
             except Exception as e:
-                st.error(f"Error al conectar con Gemini: {e}")
+                if "429" in str(e):
+                    st.warning("⏳ Límite de solicitudes alcanzado. "
+                               "Espera 1 minuto e intenta de nuevo.")
+                else:
+                    st.error(f"Error al conectar con Gemini: {e}")
 
     st.markdown("---")
 
-    # --- Pestaña 2: Análisis de prueba Z ---
+    # --- Interpretación de Prueba Z ---
     st.subheader("🧪 Interpretación de Prueba Z")
 
     if "resultado_z" not in st.session_state:
@@ -93,7 +103,7 @@ def modulo_asistente_ia():
         col1, col2, col3 = st.columns(3)
         col1.metric("Z calculado", r["z_calculado"])
         col2.metric("p-value", r["p_value"])
-        col3.metric("Decisión", 
+        col3.metric("Decisión",
                     "Rechazar H0" if r["rechazar"] else "No rechazar H0")
 
         st.markdown("**¿Cuál fue tu decisión como estudiante?**")
@@ -108,7 +118,7 @@ def modulo_asistente_ia():
             coincide = decision_estudiante == decision_auto
 
             prompt_z = f"""
-            Eres un asistente experto en estadística inferencial. 
+            Eres un asistente experto en estadística inferencial.
             Responde en español de forma clara para un estudiante universitario.
 
             Se realizó una prueba Z con los siguientes parámetros:
@@ -134,9 +144,14 @@ def modulo_asistente_ia():
 
             with st.spinner("Gemini está interpretando la prueba Z..."):
                 try:
-                    modelo = genai.GenerativeModel("gemini-1.5-flash")
-                    respuesta = modelo.generate_content(prompt_z)
-
+                    modelo = genai.GenerativeModel("gemini-2.0-flash-lite")
+                    respuesta = modelo.generate_content(
+                        prompt_z,
+                        generation_config=genai.types.GenerationConfig(
+                            max_output_tokens=500,
+                            temperature=0.7
+                        )
+                    )
                     st.markdown("#### 💬 Respuesta de Gemini:")
                     st.markdown(respuesta.text)
 
@@ -150,4 +165,8 @@ def modulo_asistente_ia():
                                  f"NO coincide con la decisión automática "
                                  f"**'{decision_auto}'**. Revisa el análisis.")
                 except Exception as e:
-                    st.error(f"Error al conectar con Gemini: {e}")
+                    if "429" in str(e):
+                        st.warning("⏳ Límite de solicitudes alcanzado. "
+                                   "Espera 1 minuto e intenta de nuevo.")
+                    else:
+                        st.error(f"Error al conectar con Gemini: {e}")
