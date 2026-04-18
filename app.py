@@ -2,27 +2,37 @@ import streamlit as st
 from modulos.carga_datos import modulo_carga_datos
 from modulos.visualizacion import modulo_visualizacion
 from modulos.prueba_z import modulo_prueba_z
+from modulos.asistente_ia import modulo_asistente_ia
+
+import streamlit as st
+from modulos.carga_datos import modulo_carga_datos
+from modulos.visualizacion import modulo_visualizacion
+from modulos.prueba_z import modulo_prueba_z
+from modulos.asistente_ia import modulo_asistente_ia
 
 st.set_page_config(page_title="Análisis Estadístico",
-                   page_icon="📃", layout="wide")
+                   page_icon="📊", layout="wide")
 
-st.title("Aplicación de Probabilidad y Estadística")
+st.title("📊 Aplicación de Probabilidad y Estadística")
 st.markdown("---")
 
-st.sidebar.title("Navegación")
+st.sidebar.title("🧭 Navegación")
 modulo = st.sidebar.radio("Selecciona un módulo", [
-    "Carga de Datos",
-    "Visualización",
-    "Prueba Z"
+    "📂 Carga de Datos",
+    "📊 Visualización",
+    "🧪 Prueba Z",
+    "🤖 Asistente IA"
 ])
 
-if modulo == "Carga de Datos":
+if modulo == "📂 Carga de Datos":
     modulo_carga_datos()
-elif modulo == "Visualización":
+elif modulo == "📊 Visualización":
     modulo_visualizacion()
-elif modulo == "Prueba Z":
+elif modulo == "🧪 Prueba Z":
     modulo_prueba_z()
-
+elif modulo == "🤖 Asistente IA":
+    modulo_asistente_ia()
+    
 # CSS personalizado para estilizar las pestañas
 st.markdown("""
 <style>
