@@ -22,7 +22,7 @@ def modulo_carga_datos():
         archivo = st.file_uploader("Sube tu archivo CSV", type=["csv"])
         if archivo is not None:
             df = pd.read_csv(archivo)
-            st.success("✅ Archivo cargado correctamente")
+            st.success("Archivo cargado correctamente")
             st.dataframe(df.head(10))
 
     elif opcion == "Generar datos sintéticos":
