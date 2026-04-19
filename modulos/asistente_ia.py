@@ -232,7 +232,9 @@ def modulo_asistente_ia():
     st.subheader("🧪 Interpretación de Prueba Z")
 
     if "resultado_z" not in st.session_state:
-        st.info("💡 Primero ejecuta la Prueba Z en el módulo correspondiente.")
+        st.warning("⚠️ No se encontró resultado de Prueba Z en memoria.")
+        st.info("💡 Ve al módulo **Prueba Z**, ejecuta el cálculo y regresa aquí.")
+        return
     else:
         r = st.session_state["resultado_z"]
 

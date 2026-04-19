@@ -10,10 +10,41 @@ PALETA = {
     "suave":      "#243156",
     "fondo":      "#fafaf8"
 }
+def generar_grafico_z(z_calc, z_crit, tipo_prueba, alpha):
+    """Genera la visualización de la campana de Gauss y regiones de rechazo."""
+    x = np.linspace(-4, 4, 1000)
+    y = stats.norm.pdf(x, 0, 1)
+
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(x, y, color=PALETA["medio"], lw=2.5, label='Distribución Normal ($H_0$)')
+
+    # Configuración de regiones de rechazo
+    color_r = PALETA["principal"]
+    lbl_r = f'Región de Rechazo (α={alpha})'
+
+    if "Bilateral" in tipo_prueba:
+        ax.fill_between(x, 0, y, where=(x >= abs(z_crit)), color=color_r, alpha=0.4, label=lbl_r)
+        ax.fill_between(x, 0, y, where=(x <= -abs(z_crit)), color=color_r, alpha=0.4)
+    elif "izquierda" in tipo_prueba:
+        ax.fill_between(x, 0, y, where=(x <= z_crit), color=color_r, alpha=0.4, label=lbl_r)
+    else:
+        ax.fill_between(x, 0, y, where=(x >= z_crit), color=color_r, alpha=0.4, label=lbl_r)
+
+    # Línea del estadístico Z calculado
+    ax.axvline(z_calc, color=PALETA["medio_alto"], ls='--', lw=2, label=f'Z calculado ({z_calc:.2f})')
+    ax.scatter(z_calc, stats.norm.pdf(z_calc, 0, 1), color=PALETA["medio_alto"], s=100, zorder=5)
+
+    # Estética del gráfico
+    ax.set_title(f"Visualización de la Prueba Z", color=PALETA["medio"], fontsize=14)
+    ax.legend(frameon=False, loc='upper right', fontsize=9)
+    ax.spines[['top', 'right']].set_visible(False)
+    fig.patch.set_facecolor(PALETA["fondo"])
+    ax.set_facecolor(PALETA["fondo"])
+    
+    return fig
 
 def modulo_prueba_z():
     st.header("Prueba de Hipótesis Z")
-
     if "df" not in st.session_state or "variable" not in st.session_state:
         st.warning("⚠️ Primero debes cargar los datos en el módulo de Carga de Datos.")
         return
@@ -79,10 +110,31 @@ def modulo_prueba_z():
             rechazar = z_calculado < z_critico
         else:
             rechazar = z_calculado > z_critico
-
+        # guardar en session-state
+        st.session_state["resultado_z"] = {
+            "media_muestral": round(media_muestral, 4),
+            "mu0": mu0,
+            "sigma": sigma,
+            "n": n,
+            "alpha": alpha,
+            "tipo_prueba": tipo_prueba,
+            "z_calculado": round(z_calculado, 4),
+            "z_critico": round(z_critico, 4),
+            "p_value": round(p_value, 4),
+            "rechazar": rechazar
+        }
+        # grafico
+        st.markdown("---")
+        st.subheader("Visualización Estadística")
+        figura = generar_grafico_z(z_calculado, z_critico, tipo_prueba, alpha)
+        st.pyplot(figura)
         # --- Resultados numéricos ---
         st.markdown("---")
         st.subheader("Resultados")
         col5, col6, col7, col8 = st.columns(4)
         col5.metric("Media muestral (x̄)", f"{media_muestral:.4f}")
         col6.metric("Z calculado", f"{z_calculado:.4f}")
+        col7.metric("p-value", f"{p_value:.4f}")
+        col8.metric("Decisión", "Rechazar H0" if rechazar else "No rechazar H0")
+
+        st.success("✅ ¡Cálculo completado! Ahora puedes ir al Asistente de IA.")
