@@ -32,5 +32,4 @@ streamlit run app.py
 - Interpretación automática de resultados
 - Asistente IA para análisis estadístico
 
-## Estado
-🚧 En desarrollo
+
