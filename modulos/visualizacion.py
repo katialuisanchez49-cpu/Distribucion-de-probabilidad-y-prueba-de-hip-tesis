@@ -28,28 +28,24 @@ def modulo_visualizacion():
 
     st.markdown("""
     <style>
-        .viz-tabs [data-baseweb="tab-list"] button {
-            background-color: #EAFAF1;
-            color: #1E8449;
-            font-weight: bold;
-            border-radius: 8px 8px 0 0;
+        div[data-baseweb="tab-list"] button {
+            background-color: #fafaf8 !important;
+            color: #1a2744 !important;
+            border: 1.5px solid #c9a84c !important;
+            font-weight: 500 !important;
         }
-        .viz-tabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-            background-color: #27AE60;
-            color: white;
+        div[data-baseweb="tab-list"] button[aria-selected="true"] {
+            background-color: #c9a84c !important;
+            color: #1a2744 !important;
+            font-weight: 700 !important;
         }
-        .viz-tabs [data-baseweb="tab-list"] button:hover {
-            background-color: #A9DFBF;
-            color: white;
+        div[data-baseweb="tab-list"] button:hover {
+            background-color: #fdf0d0 !important;
+            color: #1a2744 !important;
         }
-        .viz-tabs [data-baseweb="tab"] {
-            background-color: #F9FFFC;
-            border-radius: 0 0 8px 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+        </style>
+        """, unsafe_allow_html=True)
+   
 
     tab_estadisticas, tab_graficas, tab_analisis = st.tabs([
         "Estadísticas Descriptivas", "Gráficas", "Análisis Automático"
@@ -75,113 +71,90 @@ def modulo_visualizacion():
             default=["Histograma + KDE", "Boxplot"]
         )
 
+        col_a, col_b = st.columns(2)
+
         if "Histograma + KDE" in tipo_grafica:
-            st.markdown("#### Histograma con KDE")
-            fig, ax = plt.subplots(figsize=(6, 3))
-            sns.histplot(datos, kde=True, ax=ax,
-                        color="#c9a84c", edgecolor="white")
-            ax.lines[0].set_color("#1a2744")
-            ax.lines[0].set_linewidth(2.5)
-            ax.set_title(f"Histograma + KDE de {variable}",
-                         fontsize=13, fontweight="bold")
-            ax.set_xlabel(variable, fontsize=11)
-            ax.set_ylabel("Frecuencia", fontsize=11)
-            ax.set_facecolor("#FFFFFF")
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-            ax.grid(axis="y", linestyle="--", alpha=0.3)
-            fig.patch.set_facecolor("#FFFFFF")
-            plt.tight_layout()
-            st.pyplot(fig)
-            plt.close()
+            with col_a:
+                st.markdown("#### Histograma con KDE")
+                fig, ax = plt.subplots(figsize=(5, 3))
+                sns.histplot(datos, kde=True, ax=ax,
+                             color="#c9a84c", edgecolor="white")
+                ax.lines[0].set_color("#1a2744")
+                ax.lines[0].set_linewidth(2.5)
+                ax.set_title(f"Histograma + KDE de {variable}",
+                             fontsize=11, fontweight="bold")
+                ax.set_xlabel(variable, fontsize=10)
+                ax.set_ylabel("Frecuencia", fontsize=10)
+                ax.set_facecolor("#ffffff")
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                ax.grid(axis="y", linestyle="--", alpha=0.3)
+                fig.patch.set_facecolor("#ffffff")
+                plt.tight_layout()
+                st.pyplot(fig)
+                plt.close()
 
         if "Boxplot" in tipo_grafica:
-            st.markdown("#### Boxplot")
-            fig, ax = plt.subplots(figsize=(6, 3))
-            sns.boxplot(x=datos, ax=ax,
-                        color="#fafaf8",
-                        boxprops=dict(edgecolor="#1a2744"),
-                        whiskerprops=dict(color="#1a2744"),
-                        capprops=dict(color="#1a2744"),
-                        medianprops=dict(color="#c9a84c", linewidth=2.5))
-            ax.set_title(f"Boxplot de {variable}",
-                         fontsize=13, fontweight="bold")
-            ax.set_xlabel(variable, fontsize=11)
-            ax.set_facecolor("#FFFFFF")
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-            fig.patch.set_facecolor("#FFFFFF")
-            plt.tight_layout()
-            st.pyplot(fig)
-            plt.close()
+            with col_b:
+                st.markdown("#### Boxplot")
+                fig, ax = plt.subplots(figsize=(5, 2.5))
+                sns.boxplot(x=datos, ax=ax,
+                            color="#fafaf8",
+                            boxprops=dict(edgecolor="#1a2744"),
+                            whiskerprops=dict(color="#1a2744"),
+                            capprops=dict(color="#1a2744"),
+                            medianprops=dict(color="#c9a84c", linewidth=2.5))
+                ax.set_title(f"Boxplot de {variable}",
+                             fontsize=11, fontweight="bold")
+                ax.set_xlabel(variable, fontsize=10)
+                ax.set_facecolor("#ffffff")
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                fig.patch.set_facecolor("#ffffff")
+                plt.tight_layout()
+                st.pyplot(fig)
+                plt.close()
 
         if "QQ-Plot" in tipo_grafica:
-            st.markdown("#### QQ-Plot (Normalidad)")
-            fig, ax = plt.subplots(figsize=(5, 3))
-            stats.probplot(datos, dist="norm", plot=ax)
-            ax.get_lines()[0].set(color="#c9a84c", markersize=4, alpha=0.7)
-            ax.get_lines()[1].set(color="#1a2744", linewidth=2)
-            ax.set_title(f"QQ-Plot de {variable}",
-                         fontsize=13, fontweight="bold")
-            ax.set_facecolor("#FFFFFF")
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-            ax.grid(axis="both", linestyle="--", alpha=0.3)
-            fig.patch.set_facecolor("#FFFFFF")
-            plt.tight_layout()
-            st.pyplot(fig)
-            plt.close()
+            with col_a:
+                st.markdown("#### QQ-Plot (Normalidad)")
+                fig, ax = plt.subplots(figsize=(5, 3))
+                stats.probplot(datos, dist="norm", plot=ax)
+                ax.get_lines()[0].set(color="#c9a84c", markersize=4, alpha=0.7)
+                ax.get_lines()[1].set(color="#1a2744", linewidth=2)
+                ax.set_title(f"QQ-Plot de {variable}",
+                             fontsize=11, fontweight="bold")
+                ax.set_facecolor("#ffffff")
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                ax.grid(linestyle="--", alpha=0.3)
+                fig.patch.set_facecolor("#ffffff")
+                plt.tight_layout()
+                st.pyplot(fig)
+                plt.close()
 
-        # --- Distribución Normal con valores Z ---
+        # Distribución Normal Z — siempre visible abajo
         st.markdown("---")
-        st.subheader("📉 Distribución Normal Estándar")
-        st.write("Esta gráfica muestra cómo se distribuyen los datos "
-                 "estandarizados (valores Z).")
-
-        fig, ax = plt.subplots(figsize=(8, 3.5))
+        st.markdown("#### 📉 Distribución Normal Z")
+        fig, ax = plt.subplots(figsize=(10, 3.5))
         z_datos = (datos - datos.mean()) / datos.std()
         x = np.linspace(-4, 4, 1000)
         y = stats.norm.pdf(x)
-
-        ax.plot(x, y, color="#2C2C2C", linewidth=2.5,
-                label="Distribución normal teórica", zorder=3)
-        ax.fill_between(x, y, color=PALETA["fondo"], alpha=0.6, zorder=1)
-
+        ax.plot(x, y, color="#1a2744", linewidth=2, zorder=3)
+        ax.fill_between(x, y, color="#fafaf8", alpha=0.6, zorder=1)
         ax.hist(z_datos, bins=30, density=True,
-                color=PALETA["medio_alto"], alpha=0.5,
-                edgecolor="white", label="Datos estandarizados", zorder=2)
-
-        ax.axvline(0, color=PALETA["principal"], linewidth=2,
-                   linestyle="--", label="Media (Z = 0)")
-
-        for val, etiqueta in [
-            (-3, "-3σ"), (-2, "-2σ"), (-1, "-1σ"),
-            (1, "+1σ"), (2, "+2σ"), (3, "+3σ")
-        ]:
-            ax.axvline(val, color=PALETA["medio"], linewidth=1,
-                       linestyle=":", alpha=0.8)
-            ax.text(val, max(y)*1.05, etiqueta, ha="center",
-                    fontsize=9, color=PALETA["principal"])
-
-        ax.text(0, max(y)*0.6, f"x̄ = {datos.mean():.2f}",
-                ha="center", fontsize=10, color=PALETA["principal"],
-                fontweight="bold",
-                bbox=dict(boxstyle="round,pad=0.3",
-                          facecolor=PALETA["suave"], alpha=0.9))
-
-        ax.set_title("Distribución Normal Estándar con valores Z",
-                     fontsize=13, fontweight="bold", pad=12)
-        ax.set_xlabel("Valores Z (desviaciones estándar)", fontsize=11)
-        ax.set_ylabel("Densidad", fontsize=11)
-        ax.set_xlim(-4.2, 4.2)
-        ax.set_ylim(0, max(y) * 1.2)
-        ax.legend(loc="upper right", fontsize=10,
-                  framealpha=0.9, edgecolor=PALETA["medio"])
-        ax.set_facecolor("#FFFFFF")
+                color="#c9a84c", alpha=0.5,
+                edgecolor="white", zorder=2)
+        ax.axvline(0, color="#1a2744", linewidth=1.5, linestyle="--")
+        ax.set_title("Distribución Normal Z",
+                     fontsize=11, fontweight="bold")
+        ax.set_xlabel("Valores Z", fontsize=10)
+        ax.set_ylabel("Densidad", fontsize=10)
+        ax.set_facecolor("#ffffff")
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.grid(axis="y", linestyle="--", alpha=0.3)
-        fig.patch.set_facecolor("#FFFFFF")
+        fig.patch.set_facecolor("#ffffff")
         plt.tight_layout()
         st.pyplot(fig)
         plt.close()

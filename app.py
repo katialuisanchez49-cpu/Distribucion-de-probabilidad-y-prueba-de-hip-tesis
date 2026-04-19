@@ -12,173 +12,253 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-/* ── Botones ── */
-div.stButton > button {
-    background-color: #c9a84c;
-    color: #1a2744;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 15px;
-    font-weight: 700;
-    transition: 0.3s;
-    width: 100%;
-}
-div.stButton > button:hover {
-    background-color: #a8872e;
-    color: #ffffff;
+/* ── Fuentes ── */
+* { font-family: serif !important; }
+h1, h2 { font-family: Georgia, serif !important; }
+
+/* ── Fondo general ── */
+.main { background-color: #fafaf8 !important; }
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    background-color: #fafaf8 !important;
 }
 
-/* ── Inputs ── */
+/* ── Ocultar sidebar ── */
+section[data-testid="stSidebar"] { display: none; }
+
+/* ── Tabs ── */
+div[data-baseweb="tab-list"] {
+    background-color: #fdf6e3 !important;
+    border-bottom: 2px solid #c9a84c !important;
+    padding: 6px 12px !important;
+    gap: 4px !important;
+}
+div[data-baseweb="tab-list"] button {
+    background-color: #fafaf8 !important;
+    color: #1a2744 !important;
+    border: 1.5px solid #c9a84c !important;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 8px 18px !important;
+    transition: 0.2s !important;
+}
+div[data-baseweb="tab-list"] button[aria-selected="true"] {
+    background-color: #c9a84c !important;
+    color: #1a2744 !important;
+    font-weight: 700 !important;
+}
+div[data-baseweb="tab-list"] button:hover {
+    background-color: #fdf0d0 !important;
+    color: #1a2744 !important;
+}
+div[data-baseweb="tab-panel"] {
+    background-color: #fafaf8 !important;
+    border: 1px solid #e8d5a3 !important;
+    border-top: none !important;
+    padding: 1.5rem !important;
+}
+
+/* ── Botones principales ── */
+div.stButton > button {
+    background-color: #c9a84c !important;
+    color: #1a2744 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    transition: 0.3s !important;
+    width: 100% !important;
+}
+div.stButton > button:hover {
+    background-color: #a8872e !important;
+    color: #ffffff !important;
+}
+
+/* ── File uploader ── */
+div[data-testid="stFileUploader"] {
+    background-color: #fdf6e3 !important;
+    border: 2px dashed #c9a84c !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+}
+div[data-testid="stFileUploader"] * {
+    color: #1a2744 !important;
+    background-color: transparent !important;
+}
+div[data-testid="stFileUploadDropzone"] {
+    background-color: #fdf6e3 !important;
+}
+button[data-testid="baseButton-secondary"] {
+    background-color: #fafaf8 !important;
+    color: #1a2744 !important;
+    border: 1.5px solid #c9a84c !important;
+    border-radius: 6px !important;
+    width: auto !important;
+}
+
+/* ── Inputs y selects ── */
 div[data-baseweb="input"] input,
 div[data-baseweb="select"] {
     border-radius: 8px !important;
     border: 1.5px solid #c9a84c !important;
     background-color: #fafaf8 !important;
     color: #1a2744 !important;
-    padding: 6px 12px !important;
 }
 
 /* ── Métricas ── */
 div[data-testid="metric-container"] {
-    background-color: #1a2744;
-    border: 1.5px solid #c9a84c;
-    border-radius: 10px;
-    padding: 12px 16px;
-    text-align: center;
-    color: #ffffff !important;
+    background-color: #fdf6e3 !important;
+    border: 1.5px solid #c9a84c !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    text-align: center !important;
 }
 div[data-testid="metric-container"] label {
-    color: #c9a84c !important;
-    font-weight: 600;
+    color: #a8872e !important;
+    font-weight: 600 !important;
 }
 div[data-testid="metric-container"] div {
-    color: #ffffff !important;
-}
-
-/* ── Sidebar ── */
-section[data-testid="stSidebar"] {
-    background-color: #1a2744;
-}
-section[data-testid="stSidebar"] * {
-    color: #ffffff !important;
-}
-
-/* ── Pestañas sidebar ── */
-section[data-testid="stSidebar"] div[data-baseweb="radio"] label {
-    display: block;
-    background-color: #243156;
-    border: 1.5px solid #c9a84c;
-    border-radius: 10px;
-    padding: 10px 16px;
-    margin: 6px 0;
-    font-size: 15px;
-    font-weight: 500;
-    color: #ffffff !important;
-    cursor: pointer;
-    transition: 0.2s;
-}
-section[data-testid="stSidebar"] div[data-baseweb="radio"] label:hover {
-    background-color: #c9a84c;
     color: #1a2744 !important;
 }
 
-/* ── Encabezados sombreados ── */
+/* ── Encabezados ── */
 h1 {
-    background-color: #1a2744;
-    border-left: 5px solid #c9a84c;
-    border-radius: 6px;
-    padding: 10px 18px;
-    color: #ffffff !important;
-    font-size: 1.9rem;
+    color: #a8872e !important;
+    font-size: 1.8rem !important;
+    font-family: Georgia, serif !important;
+    border-bottom: 2px solid #c9a84c !important;
+    padding-bottom: 8px !important;
+    background: none !important;
 }
 h2 {
-    background-color: rgba(26, 39, 68, 0.85);
-    border-left: 4px solid #c9a84c;
-    border-radius: 6px;
-    padding: 8px 14px;
-    color: #ffffff !important;
+    color: #a8872e !important;
+    font-family: Georgia, serif !important;
+    border-bottom: 1.5px solid #e8d5a3 !important;
+    padding-bottom: 6px !important;
+    background: none !important;
 }
 h3 {
-    background-color: rgba(26, 39, 68, 0.6);
-    border-left: 3px solid #c9a84c;
-    border-radius: 6px;
-    padding: 6px 12px;
-    color: #ffffff !important;
+    color: #1a2744 !important;
+    font-family: sans-serif !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid #e8d5a3 !important;
+    padding-bottom: 4px !important;
+    background: none !important;
 }
 
-/* ── Pestañas internas ── */
-div[data-baseweb="tab-list"] button {
-    background-color: #1a2744 !important;
-    color: #ffffff !important;
-    border-radius: 8px 8px 0 0 !important;
-    font-weight: 500 !important;
-    border: 1px solid #c9a84c !important;
-    margin-right: 4px !important;
+/* ── Alertas sin azul ── */
+div[data-testid="stInfo"],
+div[data-baseweb="notification"] {
+    background-color: #fdf6e3 !important;
+    color: #1a2744 !important;
+    border-left: 4px solid #c9a84c !important;
 }
-div[data-baseweb="tab-list"] button[aria-selected="true"] {
+div[data-testid="stSuccess"] {
+    background-color: #f6fff6 !important;
+    color: #1a2744 !important;
+}
+div[data-testid="stWarning"] {
+    background-color: #fffbf0 !important;
+    color: #1a2744 !important;
+}
+div[data-testid="stError"] {
+    background-color: #fff5f5 !important;
+    color: #1a2744 !important;
+}
+/* ── Number input botones ── */
+div[data-baseweb="input"] {
+    background-color: #fafaf8 !important;
+    border: 1.5px solid #c9a84c !important;
+    border-radius: 8px !important;
+}
+button[data-testid="stNumberInputStepDown"],
+button[data-testid="stNumberInputStepUp"] {
     background-color: #c9a84c !important;
     color: #1a2744 !important;
-    border-color: #c9a84c !important;
-    font-weight: 700 !important;
+    border: none !important;
 }
-div[data-baseweb="tab-list"] button:hover {
-    background-color: #c9a84c !important;
+button[data-testid="stNumberInputStepDown"]:hover,
+button[data-testid="stNumberInputStepUp"]:hover {
+    background-color: #a8872e !important;
+}
+/* ── Fix botón upload ── */
+div[data-testid="stFileUploader"] button span {
+    display: none !important;
+}
+div[data-testid="stFileUploader"] button::after {
+    content: "Subir archivo" !important;
+    color: #1a2744 !important;
+    font-family: sans-serif !important;
+    font-size: 14px !important;
+}
+div[data-testid="stFileUploader"] button {
+    background-color: #fafaf8 !important;
+    border: 1.5px solid #c9a84c !important;
+    border-radius: 6px !important;
+    padding: 6px 16px !important;
+    width: auto !important;
+}
+/* ── Radio buttons ── */
+div[data-baseweb="radio"] input {
+    accent-color: #c9a84c !important;
+}
+
+/* ── Selectbox ── */
+div[data-baseweb="select"] * {
+    background-color: #fafaf8 !important;
     color: #1a2744 !important;
 }
 
-/* ── Espaciado ── */
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    padding-left: 3rem;
-    padding-right: 3rem;
+/* ── Spinner ── */
+div[data-testid="stSpinner"] {
+    color: #c9a84c !important;
+}
+
+/* ── Dataframe ── */
+div[data-testid="stDataFrame"] {
+    border: 1px solid #e8d5a3 !important;
+    border-radius: 8px !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar ──
-st.sidebar.markdown("""
-<div style='text-align:center; padding: 10px 0 5px;'>
-    <span style='font-size:40px;'>📊</span>
-    <p style='color:#c9a84c; font-weight:700; font-size:16px; margin:4px 0;'>
-        Análisis Estadístico
-    </p>
+# ── Header superior ──
+st.markdown("""
+<div style='padding:16px 24px; display:flex; align-items:center;
+     gap:12px; border-bottom: 3px solid #c9a84c;
+     background-color:#fafaf8; width:100%; box-sizing:border-box;
+     margin-top: 0;'>
+    <span style='font-size:30px;'>📊</span>
+    <div style='flex:1;'>
+        <p style='color:#a8872e; font-family:Georgia,serif;
+           font-size:35px; font-weight:700; margin:0; line-height:1.4;'>
+            Aplicación de Probabilidad y Estadística
+        </p>
+        <p style='color:#c9a84c; font-family:sans-serif;
+           font-size:12px; margin:0;'>
+            Python · Streamlit · Gemini
+        </p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
-
-st.sidebar.markdown("---")
-st.sidebar.markdown(
-    "<p style='color:#c9a84c; font-weight:700; "
-    "font-size:13px; margin-bottom:4px; letter-spacing:1px;'>NAVEGACIÓN</p>",
-    unsafe_allow_html=True
-)
-
-modulo = st.sidebar.radio("Modulos", [
+# ── Navegación como tabs ──
+tab1, tab2, tab3, tab4 = st.tabs([
     "📂  Carga de Datos",
     "📊  Visualización",
     "🧪  Prueba Z",
     "🤖  Asistente IA"
-], label_visibility="collapsed")
+])
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
-<div style='font-size:12px; color:#ffffff; padding: 4px 0;'>
-    <p style='margin:2px 0; color:#c9a84c;'>📘 Probabilidad y Estadística</p>
-    <p style='margin:2px 0;'>🐍 Python · Streamlit · Gemini</p>
-</div>
-""", unsafe_allow_html=True)
-
-# ── Módulos ──
-
-st.title("📊 Aplicación de Probabilidad y Estadística")
-st.markdown("---")
-
-if modulo == "📂  Carga de Datos":
+with tab1:
     modulo_carga_datos()
-elif modulo == "📊  Visualización":
+with tab2:
     modulo_visualizacion()
-elif modulo == "🧪  Prueba Z":
+with tab3:
     modulo_prueba_z()
-elif modulo == "🤖  Asistente IA":
+with tab4:
     modulo_asistente_ia()

@@ -3,6 +3,7 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+
 PALETA = {
     "principal":  "#c9a84c",
     "medio_alto": "#a8872e",
@@ -10,37 +11,93 @@ PALETA = {
     "suave":      "#243156",
     "fondo":      "#fafaf8"
 }
+
 def generar_grafico_z(z_calc, z_crit, tipo_prueba, alpha):
-    """Genera la visualización de la campana de Gauss y regiones de rechazo."""
     x = np.linspace(-4, 4, 1000)
     y = stats.norm.pdf(x, 0, 1)
 
-    fig, ax = plt.subplots(figsize=(10, 4))
-    ax.plot(x, y, color=PALETA["medio"], lw=2.5, label='Distribución Normal ($H_0$)')
+    fig, ax = plt.subplots(figsize=(10, 3))
+    ax.plot(x, y, color=PALETA["medio"], lw=2.5,
+            label='Distribución Normal ($H_0$)')
 
-    # Configuración de regiones de rechazo
     color_r = PALETA["principal"]
     lbl_r = f'Región de Rechazo (α={alpha})'
 
     if "Bilateral" in tipo_prueba:
-        ax.fill_between(x, 0, y, where=(x >= abs(z_crit)), color=color_r, alpha=0.4, label=lbl_r)
-        ax.fill_between(x, 0, y, where=(x <= -abs(z_crit)), color=color_r, alpha=0.4)
+        ax.fill_between(x, 0, y, where=(x >= abs(z_crit)),
+                        color=color_r, alpha=0.4, label=lbl_r)
+        ax.fill_between(x, 0, y, where=(x <= -abs(z_crit)),
+                        color=color_r, alpha=0.4)
+        ax.axvline(abs(z_crit), color=color_r, lw=1.5, linestyle=":")
+        ax.axvline(-abs(z_crit), color=color_r, lw=1.5, linestyle=":")
+        ax.text(abs(z_crit), max(y)*0.15, f"±{abs(z_crit):.2f}",
+                ha="center", fontsize=9, color=color_r)
     elif "izquierda" in tipo_prueba:
-        ax.fill_between(x, 0, y, where=(x <= z_crit), color=color_r, alpha=0.4, label=lbl_r)
+        ax.fill_between(x, 0, y, where=(x <= z_crit),
+                        color=color_r, alpha=0.4, label=lbl_r)
+        ax.axvline(z_crit, color=color_r, lw=1.5, linestyle=":")
+        ax.text(z_crit, max(y)*0.15, f"{z_crit:.2f}",
+                ha="center", fontsize=9, color=color_r)
     else:
-        ax.fill_between(x, 0, y, where=(x >= z_crit), color=color_r, alpha=0.4, label=lbl_r)
+        ax.fill_between(x, 0, y, where=(x >= z_crit),
+                        color=color_r, alpha=0.4, label=lbl_r)
+        ax.axvline(z_crit, color=color_r, lw=1.5, linestyle=":")
+        ax.text(z_crit, max(y)*0.15, f"{z_crit:.2f}",
+                ha="center", fontsize=9, color=color_r)
 
-    # Línea del estadístico Z calculado
-    ax.axvline(z_calc, color=PALETA["medio_alto"], ls='--', lw=2, label=f'Z calculado ({z_calc:.2f})')
-    ax.scatter(z_calc, stats.norm.pdf(z_calc, 0, 1), color=PALETA["medio_alto"], s=100, zorder=5)
+    # Z calculado — si está dentro del rango visible
+    if -4 <= z_calc <= 4:
+        ax.axvline(z_calc, color=PALETA["medio_alto"], ls='--',
+                   lw=2, label=f'Z calculado ({z_calc:.2f})')
+        ax.scatter(z_calc, stats.norm.pdf(z_calc, 0, 1),
+                   color=PALETA["medio_alto"], s=100, zorder=5)
+        ax.text(z_calc, max(y)*1.04, f"Z={z_calc:.2f}",
+                ha="center", fontsize=9, color=PALETA["medio_alto"],
+                fontweight="bold")
+    else:
+        # Z fuera del rango — mostrar flecha en el borde
+        lado = 3.7 if z_calc > 0 else -3.7
+        direccion = "→" if z_calc > 0 else "←"
+        ax.annotate(
+            f"Z={z_calc:.2f} {direccion}",
+            xy=(lado, max(y)*0.08),
+            fontsize=9,
+            color=PALETA["medio_alto"],
+            fontweight="bold",
+            ha="right" if z_calc > 0 else "left",
+            bbox=dict(boxstyle="round,pad=0.3",
+                      facecolor=PALETA["fondo"],
+                      edgecolor=PALETA["medio_alto"],
+                      alpha=0.9)
+        )
+        # Flecha en el borde
+        ax.annotate(
+            "",
+            xy=(3.95 if z_calc > 0 else -3.95, max(y)*0.05),
+            xytext=(3.5 if z_calc > 0 else -3.5, max(y)*0.05),
+            arrowprops=dict(arrowstyle="->",
+                            color=PALETA["medio_alto"], lw=2)
+        )
+        # Agregar a leyenda manualmente
+        from matplotlib.lines import Line2D
+        linea = Line2D([0], [0], color=PALETA["medio_alto"],
+                       ls='--', lw=2,
+                       label=f'Z calculado ({z_calc:.2f}) — fuera de rango')
+        ax.legend(handles=ax.get_legend_handles_labels()[0] + [linea],
+                  frameon=False, loc='upper right', fontsize=9)
 
-    # Estética del gráfico
-    ax.set_title(f"Visualización de la Prueba Z", color=PALETA["medio"], fontsize=14)
+    ax.set_xlim(-4.3, 4.3)
+    ax.set_ylim(0, max(y) * 1.2)
+    ax.set_title("Visualización de la Prueba Z",
+                 color=PALETA["medio"], fontsize=14)
+    ax.set_xlabel("Valores Z", fontsize=11)
+    ax.set_ylabel("Densidad", fontsize=11)
     ax.legend(frameon=False, loc='upper right', fontsize=9)
     ax.spines[['top', 'right']].set_visible(False)
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
     fig.patch.set_facecolor(PALETA["fondo"])
     ax.set_facecolor(PALETA["fondo"])
-    
+
     return fig
 
 def modulo_prueba_z():
@@ -65,7 +122,7 @@ def modulo_prueba_z():
             min_value=0.01, value=float(round(datos.std(), 4))
         )
     with col2:
-        alpha = st.selectbox("Nivel de significancia (α)", 
+        alpha = st.selectbox("Nivel de significancia (α)",
                              [0.01, 0.05, 0.10], index=1)
         tipo_prueba = st.selectbox("Tipo de prueba", [
             "Bilateral (H1: μ ≠ μ0)",
@@ -87,12 +144,9 @@ def modulo_prueba_z():
             st.warning(f"**H1:** μ > {mu0}")
 
     if st.button("Calcular Prueba Z"):
-
-        # --- Cálculo del estadístico Z ---
         error_estandar = sigma / np.sqrt(n)
         z_calculado = (media_muestral - mu0) / error_estandar
 
-        # --- Valor crítico y p-value ---
         if "Bilateral" in tipo_prueba:
             z_critico = stats.norm.ppf(1 - alpha / 2)
             p_value = 2 * (1 - stats.norm.cdf(abs(z_calculado)))
@@ -103,14 +157,13 @@ def modulo_prueba_z():
             z_critico = stats.norm.ppf(1 - alpha)
             p_value = 1 - stats.norm.cdf(z_calculado)
 
-        # --- Decisión ---
         if "Bilateral" in tipo_prueba:
             rechazar = abs(z_calculado) > z_critico
         elif "izquierda" in tipo_prueba:
             rechazar = z_calculado < z_critico
         else:
             rechazar = z_calculado > z_critico
-        # guardar en session-state
+
         st.session_state["resultado_z"] = {
             "media_muestral": round(media_muestral, 4),
             "mu0": mu0,
@@ -123,18 +176,19 @@ def modulo_prueba_z():
             "p_value": round(p_value, 4),
             "rechazar": rechazar
         }
-        # grafico
+
         st.markdown("---")
         st.subheader("Visualización Estadística")
         figura = generar_grafico_z(z_calculado, z_critico, tipo_prueba, alpha)
         st.pyplot(figura)
-        # --- Resultados numéricos ---
+
         st.markdown("---")
         st.subheader("Resultados")
         col5, col6, col7, col8 = st.columns(4)
         col5.metric("Media muestral (x̄)", f"{media_muestral:.4f}")
         col6.metric("Z calculado", f"{z_calculado:.4f}")
         col7.metric("p-value", f"{p_value:.4f}")
-        col8.metric("Decisión", "Rechazar H0" if rechazar else "No rechazar H0")
+        col8.metric("Decisión",
+                    "Rechazar H0" if rechazar else "No rechazar H0")
 
         st.success("✅ ¡Cálculo completado! Ahora puedes ir al Asistente de IA.")
